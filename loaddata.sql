@@ -88,3 +88,19 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved')
+VALUES ( 1,
+  2,
+  'This title',
+  CURRENT_TIMESTAMP,
+  'https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png',
+  'This content',
+  1)
+INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved')
+VALUES ( 1,
+  2,
+  'This other title',
+  CURRENT_TIMESTAMP,
+  'N/A',
+  'This different content',
+  1)

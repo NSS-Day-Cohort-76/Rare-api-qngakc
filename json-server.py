@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user
+from views import create_user, login_user, retrieve_posts
 
 
 class JSONServer(HandleRequests):
@@ -12,6 +12,15 @@ class JSONServer(HandleRequests):
 
     def do_GET(self):
         """Handle GET requests from a client"""
+
+        url = self.parse_url(self.path)
+
+        if url["requested_resource"] == "posts":
+            if url["pk"] == 0:
+                response_body = retrieve_posts(url)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+
 
     def do_PUT(self):
         """Handle PUT requests from a client"""
