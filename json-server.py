@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts
+from views import create_user, login_user, getAllPosts, get_all_tags, create_tag
 
 
 class JSONServer(HandleRequests):
@@ -19,6 +19,12 @@ class JSONServer(HandleRequests):
                 pass
                 # return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = getAllPosts()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+       
+        if url["requested_resource"] == "tags":
+            if url["pk"] != 0:
+                pass
+            response_body = get_all_tags()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
     def do_PUT(self):
@@ -55,6 +61,16 @@ class JSONServer(HandleRequests):
                     json.dumps(currentUser),
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
+            
+        elif url["requested_resource"] == "tags":
+            created = create_tag(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                    json.dumps({ "error": "Failed to create tag" }),
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )  
 
 
 #

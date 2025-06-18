@@ -1,3 +1,20 @@
+-- Run this block if you already have a database and need to re-create it
+DELETE FROM Users;
+
+
+DROP TABLE IF EXISTS PostTags;
+DROP TABLE IF EXISTS Tags;
+DROP TABLE IF EXISTS PostReactions;
+DROP TABLE IF EXISTS Reactions;
+DROP TABLE IF EXISTS Comments;
+DROP TABLE IF EXISTS Posts;
+DROP TABLE IF EXISTS Subscriptions;
+DROP TABLE IF EXISTS DemotionQueue;
+DROP TABLE IF EXISTS Categories;
+DROP TABLE IF EXISTS Users;
+-- End block
+
+
 CREATE TABLE "Users" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "first_name" varchar,
