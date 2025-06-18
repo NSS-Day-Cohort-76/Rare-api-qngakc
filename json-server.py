@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts
+from views import create_user, login_user, getAllPosts, getSinglePost
 
 
 class JSONServer(HandleRequests):
@@ -16,8 +16,8 @@ class JSONServer(HandleRequests):
 
         if url["requested_resource"] == "posts":
             if url["pk"] != 0:
-                pass
-                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                response_body = getSinglePost(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = getAllPosts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
