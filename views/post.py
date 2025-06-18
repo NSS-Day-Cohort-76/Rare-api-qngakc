@@ -8,7 +8,7 @@ def retrieve_posts(url):
 
     post_list = []
 
-    if url["requested_resource"] == "posts":
+    if url["requested_resource"] == "post":
       db_cursor.execute("""
     SELECT 
   post.id,
