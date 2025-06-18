@@ -6,6 +6,7 @@ from nss_handler import HandleRequests, status
 # Add your imports below this line
 from views import create_user, login_user, getAllPosts, get_all_tags, create_tag
 from views import retrieve_myposts, getSinglePost
+from views import create_category, get_all_categories
 
 
 class JSONServer(HandleRequests):
@@ -33,13 +34,12 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = retrieve_myposts(pk, url)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-
-
-
-        if url["requested_resource"] == "myposts":
+        
+        if url["requested_resource"] == "categories":
             if url["pk"] != 0:
-                response_body = retrieve_myposts(pk, url)
-                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                pass
+            response_body = get_all_categories()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
 
@@ -78,7 +78,7 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
             
-        elif url["requested_resource"] == "tags":
+        if url["requested_resource"] == "tags":
             created = create_tag(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
@@ -87,6 +87,16 @@ class JSONServer(HandleRequests):
                     json.dumps({ "error": "Failed to create tag" }),
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )  
+            
+        if url["requested_resource"] == "categories":
+            created = create_category(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                    json.dumps({ "error": "Failed to create category" }),
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
 
 
 #
