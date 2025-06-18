@@ -5,6 +5,7 @@ from nss_handler import HandleRequests, status
 
 # Add your imports below this line
 from views import create_user, login_user, getAllPosts, get_all_tags, create_tag
+from views import retrieve_myposts, getSinglePost
 
 
 class JSONServer(HandleRequests):
@@ -13,11 +14,12 @@ class JSONServer(HandleRequests):
     def do_GET(self):
         response_body = ""
         url = self.parse_url(self.path)
+        pk = url["pk"]
 
         if url["requested_resource"] == "posts":
             if url["pk"] != 0:
-                pass
-                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                response_body = getSinglePost(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = getAllPosts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
        
@@ -26,6 +28,20 @@ class JSONServer(HandleRequests):
                 pass
             response_body = get_all_tags()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        if url["requested_resource"] == "myposts":
+            if url["pk"] != 0:
+                response_body = retrieve_myposts(pk, url)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+
+
+        if url["requested_resource"] == "myposts":
+            if url["pk"] != 0:
+                response_body = retrieve_myposts(pk, url)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+
 
     def do_PUT(self):
         """Handle PUT requests from a client"""
