@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, retrieve_myposts, getAllPosts
+from views import create_user, login_user, retrieve_myposts, getAllPosts, display_comments
 
 
 class JSONServer(HandleRequests):
@@ -25,6 +25,12 @@ class JSONServer(HandleRequests):
         if url["requested_resource"] == "myposts":
             if url["pk"] != 0:
                 response_body = retrieve_myposts(pk, url)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+
+        if url["requested_resource"] == "comments":
+            if url["pk"] != 0:
+                response_body = display_comments(pk, url)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
