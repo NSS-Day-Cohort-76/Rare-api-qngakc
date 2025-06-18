@@ -50,9 +50,6 @@ def create_post(post_data):
     
     return True
 
-import sqlite3
-import json
-
 def retrieve_posts(url): 
   with sqlite3.connect("./db.sqlite3") as conn:
     conn.row_factory = sqlite3.Row
