@@ -79,6 +79,7 @@ class JSONServer(HandleRequests):
                 )
             
         if url["requested_resource"] == "posts":
+            print("📨 Incoming post data:", request_body)
             new_post_id = create_post(request_body)
             if new_post_id:
                 return self.response(
@@ -86,7 +87,7 @@ class JSONServer(HandleRequests):
                     status.HTTP_201_SUCCESS_CREATED.value
                 )
                   
-        if url["requested_resource"] == "tags":
+        
         if url["requested_resource"] == "tags":
             created = create_tag(request_body)
             if created:
