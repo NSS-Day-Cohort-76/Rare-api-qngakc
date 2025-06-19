@@ -4,9 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import get_all_tags, create_tag, delete_tag, update_tag
-from views import create_user, login_user, getAllPosts, retrieve_myposts, getSinglePost, create_post
-from views import create_category, get_all_categories
+from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag
 
 
 class JSONServer(HandleRequests):
@@ -34,6 +32,7 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = retrieve_myposts(pk, url)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
         
         if url["requested_resource"] == "categories":
             if url["pk"] != 0:
@@ -42,6 +41,10 @@ class JSONServer(HandleRequests):
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
+        if url["requested_resource"] == "comments":
+            if url["pk"] != 0:
+                response_body = display_comments(pk)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
     def do_PUT(self):
@@ -90,6 +93,10 @@ class JSONServer(HandleRequests):
             return self.response(
                 json.dumps(new_user), status.HTTP_201_SUCCESS_CREATED.value
             )
+        
+        if url["requested_resource"] == "post_comments":
+            new_comment = create_comment(request_body) 
+            return self.response(json.dumps(new_comment), status.HTTP_201_SUCCESS_CREATED.value)
 
         if url["requested_resource"] == "login":
             currentUser = login_user(request_body)
