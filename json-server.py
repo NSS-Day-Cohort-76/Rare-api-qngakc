@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, retrieve_myposts, getAllPosts, getSinglePost, display_comments, create_comment
+from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment
 
 
 class JSONServer(HandleRequests):
@@ -21,12 +21,25 @@ class JSONServer(HandleRequests):
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = getAllPosts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+       
+        if url["requested_resource"] == "tags":
+            if url["pk"] != 0:
+                pass
+            response_body = get_all_tags()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         if url["requested_resource"] == "myposts":
             if url["pk"] != 0:
                 response_body = retrieve_myposts(pk, url)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             
+        
+        if url["requested_resource"] == "categories":
+            if url["pk"] != 0:
+                pass
+            response_body = get_all_categories()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
 
         if url["requested_resource"] == "comments":
             if url["pk"] != 0:
@@ -44,7 +57,7 @@ class JSONServer(HandleRequests):
         """Handle POST requests from a client"""
 
         url = self.parse_url(self.path)
-        pk = url["pk"]
+        
 
         content_len = int(self.headers.get("content-length", 0))
         request_body = self.rfile.read(content_len)
@@ -70,6 +83,36 @@ class JSONServer(HandleRequests):
             else:
                 return self.response(
                     json.dumps(currentUser),
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
+            
+        if url["requested_resource"] == "posts":
+            print("📨 Incoming post data:", request_body)
+            new_post_id = create_post(request_body)
+            if new_post_id:
+                return self.response(
+                    json.dumps({ "message": "Post created", "post_id": new_post_id }),
+                    status.HTTP_201_SUCCESS_CREATED.value
+                )
+                  
+        
+        if url["requested_resource"] == "tags":
+            created = create_tag(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                    json.dumps({ "error": "Failed to create tag" }),
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )  
+            
+        if url["requested_resource"] == "categories":
+            created = create_category(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                    json.dumps({ "error": "Failed to create category" }),
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
 

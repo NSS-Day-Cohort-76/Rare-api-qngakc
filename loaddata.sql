@@ -1,3 +1,20 @@
+-- Run this block if you already have a database and need to re-create it
+DELETE FROM Users;
+
+
+DROP TABLE IF EXISTS PostTags;
+DROP TABLE IF EXISTS Tags;
+DROP TABLE IF EXISTS PostReactions;
+DROP TABLE IF EXISTS Reactions;
+DROP TABLE IF EXISTS Comments;
+DROP TABLE IF EXISTS Posts;
+DROP TABLE IF EXISTS Subscriptions;
+DROP TABLE IF EXISTS DemotionQueue;
+DROP TABLE IF EXISTS Categories;
+DROP TABLE IF EXISTS Users;
+-- End block
+
+
 CREATE TABLE "Users" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "first_name" varchar,
@@ -88,6 +105,23 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+INSERT INTO Posts (
+  user_id,
+  category_id,
+  title,
+  publication_date,
+  image_url,
+  content,
+  approved
+) VALUES (
+  1,
+  1,
+  'Test title',
+  CURRENT_TIMESTAMP,
+  'https://example.com/image.jpg',
+  'Fake post content.',
+  1
+);
 
 INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active) VALUES
 ('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1),
