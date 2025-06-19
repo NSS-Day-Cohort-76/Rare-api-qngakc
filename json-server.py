@@ -6,7 +6,7 @@ from nss_handler import HandleRequests, status
 # Add your imports below this line
 from views import create_user, login_user, getAllPosts, get_all_tags, create_tag
 from views import retrieve_myposts, getSinglePost
-from views import create_category, get_all_categories
+from views import create_category, get_all_categories, delete_category
 
 
 class JSONServer(HandleRequests):
@@ -47,7 +47,21 @@ class JSONServer(HandleRequests):
         """Handle PUT requests from a client"""
 
     def do_DELETE(self):
-        """Handle DELETE requests from a client"""
+        url = self.parse_url(self.path)
+        pk = url["pk"]
+
+        if url["requested_resource"] == "categories":
+            if pk != 0:
+                successfully_deleted = delete_category(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
 
     def do_POST(self):
         """Handle POST requests from a client"""
