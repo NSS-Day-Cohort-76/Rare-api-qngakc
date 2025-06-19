@@ -1,6 +1,6 @@
 import sqlite3
 import json
-
+from datetime import datetime
 
 def getAllPosts():
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -96,3 +96,28 @@ def getSinglePost(pk):
         query_results = db_cursor.fetchone()
 
     return json.dumps(dict(query_results))
+
+def create_post(post_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            INSERT INTO Posts
+                (user_id, category_id, title, publication_date, image_url, content, approved)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                post_data['author_id'],
+                post_data['category'],
+                post_data['title'],
+                datetime.now().isoformat(),
+                post_data.get('header_image_url', None),
+                post_data['content'],
+                True,
+            )
+        )
+
+        post_id = db_cursor.lastrowid 
+        return post_id 
