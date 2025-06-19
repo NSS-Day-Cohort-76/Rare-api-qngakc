@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, retrieve_myposts, getAllPosts, display_comments
+from views import create_user, login_user, retrieve_myposts, getAllPosts, getSinglePost, display_comments, create_comment
 
 
 class JSONServer(HandleRequests):
@@ -17,8 +17,8 @@ class JSONServer(HandleRequests):
 
         if url["requested_resource"] == "posts":
             if url["pk"] != 0:
-                pass
-                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                response_body = getSinglePost(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = getAllPosts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
@@ -30,9 +30,8 @@ class JSONServer(HandleRequests):
 
         if url["requested_resource"] == "comments":
             if url["pk"] != 0:
-                response_body = display_comments(pk, url)
+                response_body = display_comments(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-
 
 
     def do_PUT(self):
@@ -56,6 +55,10 @@ class JSONServer(HandleRequests):
             return self.response(
                 json.dumps(new_user), status.HTTP_201_SUCCESS_CREATED.value
             )
+        
+        if url["requested_resource"] == "post_comments":
+            new_comment = create_comment(request_body) 
+            return self.response(json.dumps(new_comment), status.HTTP_201_SUCCESS_CREATED.value)
 
         if url["requested_resource"] == "login":
             currentUser = login_user(request_body)
