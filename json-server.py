@@ -4,9 +4,8 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts
 from views import get_all_tags, create_tag, delete_tag, update_tag
-from views import retrieve_myposts, getSinglePost
+from views import create_user, login_user, getAllPosts, retrieve_myposts, getSinglePost, create_post
 from views import create_category, get_all_categories
 
 
@@ -44,17 +43,18 @@ class JSONServer(HandleRequests):
 
 
 
+
     def do_PUT(self):
         """Handle PUT requests from a client"""
 
         url = self.parse_url(self.path)
         pk = url["pk"]
 
-        if url["requested_resource"] == "tags":
-            if pk != 0:
-                successfully_updated = update_tag(pk)
-                if successfully_updated:
-                    return self.response("", stat)
+        # if url["requested_resource"] == "tags":
+        #     if pk != 0:
+        #         successfully_updated = update_tag(pk)
+        #         if successfully_updated:
+        #             return self.response("", stat)
 
     def do_DELETE(self):
         """Handle DELETE requests from a client"""
@@ -79,7 +79,7 @@ class JSONServer(HandleRequests):
         """Handle POST requests from a client"""
 
         url = self.parse_url(self.path)
-        pk = url["pk"]
+        
 
         content_len = int(self.headers.get("content-length", 0))
         request_body = self.rfile.read(content_len)
@@ -104,6 +104,16 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
             
+        if url["requested_resource"] == "posts":
+            print("📨 Incoming post data:", request_body)
+            new_post_id = create_post(request_body)
+            if new_post_id:
+                return self.response(
+                    json.dumps({ "message": "Post created", "post_id": new_post_id }),
+                    status.HTTP_201_SUCCESS_CREATED.value
+                )
+                  
+        
         if url["requested_resource"] == "tags":
             created = create_tag(request_body)
             if created:
