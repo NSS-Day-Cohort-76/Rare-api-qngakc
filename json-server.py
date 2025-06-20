@@ -10,6 +10,7 @@ from views import (
     getAllPosts,
     get_all_tags,
     create_tag,
+    update_tag,
     retrieve_myposts,
     getSinglePost,
     create_post,
@@ -77,7 +78,7 @@ class JSONServer(HandleRequests):
 
         url = self.parse_url(self.path)
         pk = url["pk"]
-
+        content_len = int(self.headers.get("content-length", 0))
          # Get the request body JSON for the new data
         content_len = int(self.headers.get('content-length', 0))
         request_body = self.rfile.read(content_len)
@@ -94,11 +95,15 @@ class JSONServer(HandleRequests):
                         status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                     )
 
-        # if url["requested_resource"] == "tags":
-        #     if pk != 0:
-        #         successfully_updated = update_tag(pk)
-        #         if successfully_updated:
-        #             return self.response("", stat)
+        
+        tag_data = json.loads(request_body)
+
+
+        if url["requested_resource"] == "tags":
+            if pk != 0:
+                successfully_updated = update_tag(pk, tag_data)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
 
     def do_DELETE(self):
         url = self.parse_url(self.path)

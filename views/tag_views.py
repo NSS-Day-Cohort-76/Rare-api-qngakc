@@ -48,12 +48,12 @@ def update_tag(id, tag_data):
         db_cursor = conn.cursor()
 
         db_cursor.execute(
-        """
-        UPDATE Tags
-            SET label = ?
-        WHERE id = ?
-        """,
-        (tag_data['label'], id)
+            """
+            UPDATE Tags
+                SET label = ?
+            WHERE id = ?
+            """,
+            (tag_data['label'], id)
         )
 
     return db_cursor.rowcount > 0
