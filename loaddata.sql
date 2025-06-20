@@ -159,4 +159,5 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (3, 1, '2025-01-01'),
 (2, 5, '2025-06-01');
 
-DROP TABLE Categories
+
+
