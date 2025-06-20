@@ -1,6 +1,6 @@
 # Rare Server
 <div style="display: flex; align-items: center;">
-  <img src="src/components/nav/rare.jpeg" alt="Rare stamp logo" width="50" height="50" style="margin-right: 8px;">
+  <img src="rare.jpeg" alt="Rare stamp logo" width="50" height="50" style="margin-right: 8px;">
   <span>Rare is a content-publishing platform where users can create text-based posts and interact with other posts through comments and reactions.</span>
 </div>
 
