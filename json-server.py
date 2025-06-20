@@ -17,7 +17,8 @@ from views import (
     get_all_categories,
     display_comments,
     create_comment,
-    delete_category
+    delete_category,
+    get_all_users
 )
 
 
@@ -59,6 +60,14 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = display_comments(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "users":
+            if url["pk"] != 0:
+                pass
+                # response_body = getSinglePost(url["pk"])
+                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            response_body = get_all_users()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
     def do_PUT(self):

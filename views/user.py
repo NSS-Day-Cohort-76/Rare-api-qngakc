@@ -69,3 +69,19 @@ def create_user(user):
             'token': id,
             'valid': True
         }
+
+def get_all_users():
+    with sqlite3.connect('./db.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("SELECT * FROM Users")
+        query_results = db_cursor.fetchall()
+
+        posts = []
+        for row in query_results:
+            posts.append(dict(row))
+
+        serialized_posts = json.dumps(posts)
+
+    return serialized_posts
