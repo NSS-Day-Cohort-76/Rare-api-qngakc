@@ -4,11 +4,26 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, delete_post, update_post
+from views import (
+    create_user,
+    login_user,
+    getAllPosts,
+    get_all_tags,
+    create_tag,
+    retrieve_myposts,
+    getSinglePost,
+    create_post,
+    create_category,
+    get_all_categories,
+    display_comments,
+    create_comment,
+    delete_category,
+    get_all_users
+)
+
 
 
 class JSONServer(HandleRequests):
-    """Server class to handle incoming HTTP requests for shipping ships"""
 
     def do_GET(self):
         response_body = ""
@@ -45,6 +60,14 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = display_comments(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "users":
+            if url["pk"] != 0:
+                pass
+                # response_body = getSinglePost(url["pk"])
+                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            response_body = get_all_users()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
     def do_PUT(self):
@@ -76,14 +99,12 @@ class JSONServer(HandleRequests):
         #             return self.response("", stat)
 
     def do_DELETE(self):
-        """Handle DELETE requests from a client"""
-        
         url = self.parse_url(self.path)
         pk = url["pk"]
 
-        if url["requested_resource"] == "tags":
+        if url["requested_resource"] == "categories":
             if pk != 0:
-                successfully_deleted = delete_tag(pk)
+                successfully_deleted = delete_category(pk)
                 if successfully_deleted:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                       
@@ -97,6 +118,7 @@ class JSONServer(HandleRequests):
 
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
               
+
 
     def do_POST(self):
         """Handle POST requests from a client"""
@@ -115,7 +137,7 @@ class JSONServer(HandleRequests):
             )
         
         if url["requested_resource"] == "post_comments":
-            new_comment = create_comment(request_body) 
+            new_comment = create_comment(request_body)
             return self.response(json.dumps(new_comment), status.HTTP_201_SUCCESS_CREATED.value)
 
         if url["requested_resource"] == "login":
