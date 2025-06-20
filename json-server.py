@@ -10,6 +10,7 @@ from views import (
     getAllPosts,
     get_all_tags,
     create_tag,
+    update_tag,
     retrieve_myposts,
     getSinglePost,
     create_post,
