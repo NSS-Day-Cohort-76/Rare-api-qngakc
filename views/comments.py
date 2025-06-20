@@ -26,12 +26,19 @@ def display_comments(pk):
     
 
 def create_comment(url):
-       with sqlite3.connect("./db.sqlite3") as conn:
-            conn.row_factory = sqlite3.Row
-            db_cursor = conn.cursor()
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-            db_cursor.execute("""
-      INSERT INTO Comments
-      (author_id, post_id, content)
-      VALUES (?, ?, ?)
-""", (url["author_id"], url["post_id"], url["content"]))
+        db_cursor.execute("""
+            INSERT INTO Comments
+            (author_id, post_id, content)
+            VALUES (?, ?, ?)
+        """, (url["author_id"], url["post_id"], url["content"]))
+
+        return {
+            "message": "Comment created successfully",
+            "author_id": url["author_id"],
+            "post_id": url["post_id"],
+            "content": url["content"]
+        }
