@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag
+from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_tag
 
 
 class JSONServer(HandleRequests):
@@ -52,12 +52,17 @@ class JSONServer(HandleRequests):
 
         url = self.parse_url(self.path)
         pk = url["pk"]
+        content_len = int(self.headers.get("content-length", 0))
+        
+        request_body = self.rfile.read(content_len)
+        tag_data = json.loads(request_body)
 
-        # if url["requested_resource"] == "tags":
-        #     if pk != 0:
-        #         successfully_updated = update_tag(pk)
-        #         if successfully_updated:
-        #             return self.response("", stat)
+
+        if url["requested_resource"] == "tags":
+            if pk != 0:
+                successfully_updated = update_tag(pk, tag_data)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
 
     def do_DELETE(self):
         """Handle DELETE requests from a client"""
