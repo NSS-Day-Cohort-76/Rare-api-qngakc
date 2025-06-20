@@ -9,21 +9,22 @@ def getAllPosts():
 
         db_cursor.execute(
             """
-        SELECT
-            Posts.id,
-            Posts.title,
-            Posts.approved,
-            Users.first_name || ' ' || Users.last_name AS author,
-            Posts.publication_date,
-            Categories.label AS category,
-            GROUP_CONCAT(Tags.label, ', ') AS tags
-        FROM Posts
-        JOIN Users ON Posts.user_id = Users.id
-        JOIN Categories ON Posts.category_id = Categories.id
-        LEFT JOIN PostTags ON Posts.id = PostTags.post_id
-        LEFT JOIN Tags ON PostTags.tag_id = Tags.id
-        GROUP BY Posts.id;
-        """
+            SELECT
+                Posts.id,
+                Posts.title,
+                Posts.approved,
+                Users.first_name || ' ' || Users.last_name AS author,
+                Posts.user_id AS author_id,
+                Posts.publication_date,
+                Categories.label AS category,
+                GROUP_CONCAT(Tags.label, ', ') AS tags
+            FROM Posts
+            JOIN Users ON Posts.user_id = Users.id
+            JOIN Categories ON Posts.category_id = Categories.id
+            LEFT JOIN PostTags ON Posts.id = PostTags.post_id
+            LEFT JOIN Tags ON PostTags.tag_id = Tags.id
+            GROUP BY Posts.id;
+            """
         )
         query_results = db_cursor.fetchall()
 
@@ -34,6 +35,7 @@ def getAllPosts():
         serialized_posts = json.dumps(posts)
 
     return serialized_posts
+
 
 
 def retrieve_myposts(pk, url):
@@ -121,3 +123,37 @@ def create_post(post_data):
 
         post_id = db_cursor.lastrowid 
         return post_id 
+
+def delete_post(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM Posts WHERE id = ?
+        """, (pk,)
+        )
+        number_of_rows = db_cursor.rowcount
+    
+    return True if number_of_rows > 0 else False
+
+def update_post(pk, post_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            UPDATE Posts
+                SET
+                    title = ?,
+                    category_id = ?,
+                    content = ?,
+                    image_url = ?
+            WHERE id = ?
+            """,
+            (post_data['title'], post_data['category_id'], post_data['content'], post_data['header_image_url'], pk)
+        )
+
+        rows_affected = db_cursor.rowcount
+    
+    return True if rows_affected > 0 else False
