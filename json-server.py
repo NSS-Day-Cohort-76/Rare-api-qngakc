@@ -18,7 +18,9 @@ from views import (
     display_comments,
     create_comment,
     delete_category,
-    get_all_users
+    get_all_users,
+    delete_post,
+    update_post
 )
 
 
