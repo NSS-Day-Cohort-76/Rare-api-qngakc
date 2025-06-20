@@ -18,7 +18,9 @@ from views import (
     display_comments,
     create_comment,
     delete_category,
-    get_all_users
+    get_all_users,
+    delete_post,
+    update_post
 )
 
 
@@ -76,6 +78,22 @@ class JSONServer(HandleRequests):
         url = self.parse_url(self.path)
         pk = url["pk"]
 
+         # Get the request body JSON for the new data
+        content_len = int(self.headers.get('content-length', 0))
+        request_body = self.rfile.read(content_len)
+        request_body = json.loads(request_body)
+
+        if url["requested_resource"] == "posts":
+            if pk != 0:
+                successfully_updated = update_post(pk, request_body)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "Post not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
+
         # if url["requested_resource"] == "tags":
         #     if pk != 0:
         #         successfully_updated = update_tag(pk)
@@ -90,14 +108,18 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_category(pk)
                 if successfully_deleted:
-                    return self.response(
-                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
-                    )
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                      
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
-                return self.response(
-                    "Requested resource not found",
-                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-                )
+        elif url["requested_resource"] == "posts":
+            if pk != 0:
+                successfully_deleted = delete_post(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+              
 
 
     def do_POST(self):
@@ -134,7 +156,7 @@ class JSONServer(HandleRequests):
                 )
             
         if url["requested_resource"] == "posts":
-            print("📨 Incoming post data:", request_body)
+            
             new_post_id = create_post(request_body)
             if new_post_id:
                 return self.response(
