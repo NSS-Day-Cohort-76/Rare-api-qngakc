@@ -35,7 +35,6 @@ def getAllPosts():
 
     return serialized_posts
 
-
 def retrieve_myposts(pk, url):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -64,7 +63,7 @@ def retrieve_myposts(pk, url):
         for row in rows:
             mypost_list.append(dict(row))
 
-        return json.dumps(mypost_list)
+    return json.dumps(mypost_list)
 
 
 

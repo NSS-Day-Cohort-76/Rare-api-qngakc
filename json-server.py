@@ -15,16 +15,14 @@ from views import (
     create_post,
     create_category,
     get_all_categories,
-    delete_category,
     display_comments,
     create_comment,
-    delete_tag,
+    delete_category
 )
 
 
 
 class JSONServer(HandleRequests):
-    """Server class to handle incoming HTTP requests for shipping ships"""
 
     def do_GET(self):
         response_body = ""
@@ -76,7 +74,22 @@ class JSONServer(HandleRequests):
         #             return self.response("", stat)
 
     def do_DELETE(self):
-        """Handle DELETE requests from a client"""
+        url = self.parse_url(self.path)
+        pk = url["pk"]
+
+        if url["requested_resource"] == "categories":
+            if pk != 0:
+                successfully_deleted = delete_category(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
+
 
     def do_POST(self):
         """Handle POST requests from a client"""

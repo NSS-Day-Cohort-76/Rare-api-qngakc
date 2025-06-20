@@ -105,6 +105,14 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+
+INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active) VALUES
+('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1),
+('Bob', 'Johnson', 'bob@example.com', 'Back-end wizard.', 'bob_j', 'password123', 'https://picsum.photos/200?2', '2023-11-15', 1),
+('Clara', 'Nguyen', 'clara@example.com', 'Full-stack dev and mentor.', 'clara_n', 'password123', 'https://picsum.photos/200?3', '2022-08-20', 1),
+('David', 'Lee', 'david@example.com', 'Tech blogger & gamer.', 'david_l', 'password123', 'https://picsum.photos/200?4', '2025-01-10', 0),
+('Eve', 'Turner', 'eve@example.com', 'Data analyst turned coder.', 'eve_t', 'password123', 'https://picsum.photos/200?5', '2024-06-12', 1);
+
 INSERT INTO Posts (
   user_id,
   category_id,
@@ -122,14 +130,6 @@ INSERT INTO Posts (
   'Fake post content.',
   1
 );
-
-INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active) VALUES
-('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1),
-('Bob', 'Johnson', 'bob@example.com', 'Back-end wizard.', 'bob_j', 'password123', 'https://picsum.photos/200?2', '2023-11-15', 1),
-('Clara', 'Nguyen', 'clara@example.com', 'Full-stack dev and mentor.', 'clara_n', 'password123', 'https://picsum.photos/200?3', '2022-08-20', 1),
-('David', 'Lee', 'david@example.com', 'Tech blogger & gamer.', 'david_l', 'password123', 'https://picsum.photos/200?4', '2025-01-10', 0),
-('Eve', 'Turner', 'eve@example.com', 'Data analyst turned coder.', 'eve_t', 'password123', 'https://picsum.photos/200?5', '2024-06-12', 1);
-
 INSERT INTO Posts (user_id, category_id, title, publication_date, image_url, content, approved) VALUES
 (1, 1, 'Launch Day Recap', '2024-12-15', 'https://picsum.photos/300?1', 'Our platform went live!', 1),
 (2, 1, 'Why I Love APIs', '2023-09-10', 'https://picsum.photos/300?2', 'Let’s talk REST and GraphQL.', 1),
@@ -159,3 +159,4 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (3, 1, '2025-01-01'),
 (2, 5, '2025-06-01');
 
+DROP TABLE Categories
