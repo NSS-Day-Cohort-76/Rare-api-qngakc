@@ -4,11 +4,34 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
+<<<<<<< HEAD
 from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_comment
+=======
+from views import (
+    create_user,
+    login_user,
+    getAllPosts,
+    get_all_tags,
+    create_tag,
+    update_tag,
+    retrieve_myposts,
+    getSinglePost,
+    create_post,
+    create_category,
+    get_all_categories,
+    display_comments,
+    create_comment,
+    delete_category,
+    get_all_users,
+    delete_post,
+    update_post,
+    delete_tag
+)
+
+>>>>>>> develop
 
 
 class JSONServer(HandleRequests):
-    """Server class to handle incoming HTTP requests for shipping ships"""
 
     def do_GET(self):
         response_body = ""
@@ -45,6 +68,14 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = display_comments(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "users":
+            if url["pk"] != 0:
+                pass
+                # response_body = getSinglePost(url["pk"])
+                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            response_body = get_all_users()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
 
@@ -61,31 +92,58 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 update_successful = update_comment(request_body, pk)
                 return self.response(update_successful, status.HTTP_200_SUCCESS.value)
+        content_len = int(self.headers.get('content-length', 0))
+        request_body = self.rfile.read(content_len)
 
-        # if url["requested_resource"] == "tags":
-        #     if pk != 0:
-        #         successfully_updated = update_tag(pk)
-        #         if successfully_updated:
-        #             return self.response("", stat)
+        if url["requested_resource"] == "posts":
+            if pk != 0:
+                successfully_updated = update_post(pk, request_body)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "Post not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
+
+        
+        tag_data = json.loads(request_body)
+
+
+        if url["requested_resource"] == "tags":
+            if pk != 0:
+                successfully_updated = update_tag(pk, tag_data)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
 
     def do_DELETE(self):
-        """Handle DELETE requests from a client"""
-        
         url = self.parse_url(self.path)
         pk = url["pk"]
 
+        if url["requested_resource"] == "categories":
+            if pk != 0:
+                successfully_deleted = delete_category(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                      
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+
+        elif url["requested_resource"] == "posts":
+            if pk != 0:
+                successfully_deleted = delete_post(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+              
         if url["requested_resource"] == "tags":
             if pk != 0:
                 successfully_deleted = delete_tag(pk)
                 if successfully_deleted:
-                    return self.response(
-                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
-                    )
-                
-                return self.response(
-                    "Requested resource not found",
-                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-                )               
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                      
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+
 
     def do_POST(self):
         """Handle POST requests from a client"""
@@ -104,7 +162,7 @@ class JSONServer(HandleRequests):
             )
         
         if url["requested_resource"] == "post_comments":
-            new_comment = create_comment(request_body) 
+            new_comment = create_comment(request_body)
             return self.response(json.dumps(new_comment), status.HTTP_201_SUCCESS_CREATED.value)
 
         if url["requested_resource"] == "login":
@@ -121,7 +179,7 @@ class JSONServer(HandleRequests):
                 )
             
         if url["requested_resource"] == "posts":
-            print("📨 Incoming post data:", request_body)
+            
             new_post_id = create_post(request_body)
             if new_post_id:
                 return self.response(
