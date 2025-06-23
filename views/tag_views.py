@@ -37,9 +37,9 @@ def delete_tag(pk):
         db_cursor.execute("""
         DELETE FROM tags WHERE id = ?
         """, (pk,))
-        number_of_rows_deleted = db_cursor.rowcount
-
-    return number_of_rows_deleted > 0
+        number_of_rows = db_cursor.rowcount
+    
+    return True if number_of_rows > 0 else False
 
 
 def update_tag(id, tag_data):
@@ -50,7 +50,7 @@ def update_tag(id, tag_data):
         db_cursor.execute(
             """
             UPDATE Tags
-                SET label = ?
+            SET label = ?
             WHERE id = ?
             """,
             (tag_data['label'], id)
