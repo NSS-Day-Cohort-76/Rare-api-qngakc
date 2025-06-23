@@ -9,6 +9,7 @@ def display_comments(pk):
       comments_list = []
       db_cursor.execute("""
   SELECT 
+  Comments.id,
   Comments.author_id,
   Comments.post_id,
   Comments.content,
@@ -35,3 +36,21 @@ def create_comment(url):
       (author_id, post_id, content)
       VALUES (?, ?, ?)
 """, (url["author_id"], url["post_id"], url["content"]))
+            
+
+def update_comment(url, pk):
+           with sqlite3.connect("./db.sqlite3") as conn:
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            new_content = url['content']
+
+            db_cursor.execute("""
+            UPDATE Comments
+            Set content = ?
+            WHERE id = ?
+            """, (new_content, pk))
+
+            return json.dumps({
+                 "success": True,
+                 "message": "Onion"
+            })

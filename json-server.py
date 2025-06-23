@@ -4,7 +4,7 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag
+from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_comment
 
 
 class JSONServer(HandleRequests):
@@ -47,11 +47,20 @@ class JSONServer(HandleRequests):
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
+
     def do_PUT(self):
         """Handle PUT requests from a client"""
+        content_len = int(self.headers.get("content-length", 0))
+        request_body = self.rfile.read(content_len)
+        request_body = json.loads(request_body)
 
         url = self.parse_url(self.path)
         pk = url["pk"]
+ # pk needs to be the single comment that we have selected, we can then do a WHERE query to update
+        if url["requested_resource"] == "update_comment":
+            if pk != 0:
+                update_successful = update_comment(request_body, pk)
+                return self.response(update_successful, status.HTTP_200_SUCCESS.value)
 
         # if url["requested_resource"] == "tags":
         #     if pk != 0:
