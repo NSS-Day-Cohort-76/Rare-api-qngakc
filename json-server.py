@@ -4,9 +4,6 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-<<<<<<< HEAD
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_comment
-=======
 from views import (
     create_user,
     login_user,
@@ -25,10 +22,10 @@ from views import (
     get_all_users,
     delete_post,
     update_post,
-    delete_tag
+    delete_tag,
+    update_comment
 )
 
->>>>>>> develop
 
 
 class JSONServer(HandleRequests):
