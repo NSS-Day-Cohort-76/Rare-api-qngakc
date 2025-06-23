@@ -21,7 +21,8 @@ from views import (
     delete_category,
     get_all_users,
     delete_post,
-    update_post
+    update_post,
+    delete_tag
 )
 
 
@@ -78,11 +79,8 @@ class JSONServer(HandleRequests):
 
         url = self.parse_url(self.path)
         pk = url["pk"]
-        content_len = int(self.headers.get("content-length", 0))
-         # Get the request body JSON for the new data
         content_len = int(self.headers.get('content-length', 0))
         request_body = self.rfile.read(content_len)
-        request_body = json.loads(request_body)
 
         if url["requested_resource"] == "posts":
             if pk != 0:
@@ -125,6 +123,13 @@ class JSONServer(HandleRequests):
 
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
               
+        if url["requested_resource"] == "tags":
+            if pk != 0:
+                successfully_deleted = delete_tag(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                      
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
 
     def do_POST(self):
