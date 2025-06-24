@@ -43,3 +43,7 @@ def delete_category(pk):
         number_of_rows_deleted = db_cursor.rowcount
 
     return True if number_of_rows_deleted > 0 else False
+
+
+def update_category(id, category_data):
+    with sqlite3.connect()
