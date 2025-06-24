@@ -4,9 +4,6 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-<<<<<<< HEAD
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_comment
-=======
 from views import (
     create_user,
     login_user,
@@ -25,10 +22,11 @@ from views import (
     get_all_users,
     delete_post,
     update_post,
-    delete_tag
+    delete_tag,
+    delete_comment,
+    update_comment
 )
 
->>>>>>> develop
 
 
 class JSONServer(HandleRequests):
@@ -92,8 +90,8 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 update_successful = update_comment(request_body, pk)
                 return self.response(update_successful, status.HTTP_200_SUCCESS.value)
-        content_len = int(self.headers.get('content-length', 0))
-        request_body = self.rfile.read(content_len)
+            content_len = int(self.headers.get('content-length', 0))
+            request_body = self.rfile.read(content_len)
 
         if url["requested_resource"] == "posts":
             if pk != 0:
@@ -143,6 +141,11 @@ class JSONServer(HandleRequests):
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                       
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+
+        if url["requested_resource"] == "deleteComment":
+            if pk != 0:
+                successfully_deleted = delete_comment(pk)
+                return self.response(successfully_deleted, status.HTTP_200_SUCCESS.value)
 
 
     def do_POST(self):
