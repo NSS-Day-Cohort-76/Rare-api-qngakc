@@ -24,7 +24,8 @@ from views import (
     update_post,
     delete_tag,
     delete_comment,
-    update_comment
+    update_comment,
+    update_category
 )
 
 
@@ -105,20 +106,28 @@ class JSONServer(HandleRequests):
                         status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                     )
 
-        
-        tag_data = json.loads(request_body)
 
         if url["requested_resource"] == "tags":
             if pk != 0:
                 successfully_updated = update_tag(pk, request_body)
                 if successfully_updated:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "Tag not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
 
         if url["requested_resource"] == "categories":
             if pk != 0:
-                successfully_updated = update_category(pk, category_data)
+                successfully_updated = update_category(pk, request_body)
                 if successfully_updated:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "Category not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
 
     def do_DELETE(self):
         url = self.parse_url(self.path)
@@ -169,7 +178,7 @@ class JSONServer(HandleRequests):
             return self.response(
                 json.dumps(new_user), status.HTTP_201_SUCCESS_CREATED.value
             )
-        
+         
         if url["requested_resource"] == "post_comments":
             new_comment = create_comment(request_body)
             return self.response(json.dumps(new_comment), status.HTTP_201_SUCCESS_CREATED.value)

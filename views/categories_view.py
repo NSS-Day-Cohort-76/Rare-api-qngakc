@@ -46,4 +46,16 @@ def delete_category(pk):
 
 
 def update_category(id, category_data):
-    with sqlite3.connect()
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            UPDATE Categories
+            SET label = ?
+            WHERE id = ?
+            """,
+            (category_data['label'], id)
+        )
+    return db_cursor.rowcount > 0
