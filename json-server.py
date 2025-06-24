@@ -79,13 +79,14 @@ class JSONServer(HandleRequests):
 
     def do_PUT(self):
         """Handle PUT requests from a client"""
+
         content_len = int(self.headers.get("content-length", 0))
-        request_body = self.rfile.read(content_len)
-        request_body = json.loads(request_body)
+        raw_body = self.rfile.read(content_len)
+        request_body = json.loads(raw_body)
 
         url = self.parse_url(self.path)
         pk = url["pk"]
- # pk needs to be the single comment that we have selected, we can then do a WHERE query to update
+
         if url["requested_resource"] == "update_comment":
             if pk != 0:
                 update_successful = update_comment(request_body, pk)
@@ -104,15 +105,12 @@ class JSONServer(HandleRequests):
                         status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                     )
 
-        
-        tag_data = json.loads(request_body)
-
-
         if url["requested_resource"] == "tags":
             if pk != 0:
-                successfully_updated = update_tag(pk, tag_data)
+                successfully_updated = update_tag(pk, request_body)
                 if successfully_updated:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
 
     def do_DELETE(self):
         url = self.parse_url(self.path)

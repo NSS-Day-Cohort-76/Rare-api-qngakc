@@ -76,26 +76,53 @@ def getSinglePost(pk):
 
         db_cursor.execute(
             """
-        SELECT
-            p.user_id,
-            p.category_id,
-            p.title,
-            p.publication_date,
-            p.image_url,
-            p.content,
-            p.approved,
-            users.first_name,
-            users.last_name
-        FROM Posts p  
-        JOIN Users ON p.user_id = Users.id       
-        WHERE p.id = ?
-        """,
+            SELECT
+                p.id,
+                p.user_id,
+                p.category_id,
+                c.label AS category_label,
+                p.title,
+                p.publication_date,
+                p.image_url,
+                p.content,
+                p.approved,
+                users.first_name,
+                users.last_name
+            FROM Posts p  
+            JOIN Users ON p.user_id = Users.id
+            LEFT JOIN Categories c ON p.category_id = c.id
+            WHERE p.id = ?
+            """,
             (pk,),
         )
 
-        query_results = db_cursor.fetchone()
+        post_row = db_cursor.fetchone()
+        if not post_row:
+            return json.dumps({"error": "Post not found"})
 
-    return json.dumps(dict(query_results))
+        post = dict(post_row)
+
+        db_cursor.execute(
+            """
+            SELECT t.id, t.label
+            FROM Tags t
+            JOIN PostTags pt ON pt.tag_id = t.id
+            WHERE pt.post_id = ?
+            """,
+            (pk,),
+        )
+
+        tag_rows = db_cursor.fetchall()
+        tags = [dict(row) for row in tag_rows]
+
+        post["tags"] = tags
+    print(json.dumps(post, indent=2))
+    return json.dumps(post)
+
+
+
+from datetime import datetime
+import sqlite3
 
 def create_post(post_data):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -119,8 +146,20 @@ def create_post(post_data):
             )
         )
 
-        post_id = db_cursor.lastrowid 
-        return post_id 
+        post_id = db_cursor.lastrowid
+
+        tag_ids = post_data.get("tag_ids", [])
+        for tag_id in tag_ids:
+            db_cursor.execute(
+                """
+                INSERT INTO PostTags (post_id, tag_id)
+                VALUES (?, ?)
+                """,
+                (post_id, tag_id)
+            )
+
+        return post_id
+
 
 def delete_post(pk):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -142,16 +181,31 @@ def update_post(pk, post_data):
         db_cursor.execute(
             """
             UPDATE Posts
-                SET
-                    title = ?,
-                    category_id = ?,
-                    content = ?,
-                    image_url = ?
+            SET
+                title = ?,
+                category_id = ?,
+                content = ?,
+                image_url = ?
             WHERE id = ?
             """,
-            (post_data['title'], post_data['category_id'], post_data['content'], post_data['header_image_url'], pk)
+            (
+                post_data['title'],
+                post_data['category_id'],
+                post_data['content'],
+                post_data.get('header_image_url', None),
+                pk
+            )
         )
 
+        db_cursor.execute("DELETE FROM PostTags WHERE post_id = ?", (pk,))
+
+        tag_ids = post_data.get("tag_ids", [])
+        for tag_id in tag_ids:
+            db_cursor.execute(
+                "INSERT INTO PostTags (post_id, tag_id) VALUES (?, ?)",
+                (pk, tag_id)
+            )
+
         rows_affected = db_cursor.rowcount
-    
+
     return True if rows_affected > 0 else False
