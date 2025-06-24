@@ -185,7 +185,8 @@ def update_post(pk, post_data):
                 title = ?,
                 category_id = ?,
                 content = ?,
-                image_url = ?
+                image_url = ?,
+                approved = ?
             WHERE id = ?
             """,
             (
@@ -193,6 +194,7 @@ def update_post(pk, post_data):
                 post_data['category_id'],
                 post_data['content'],
                 post_data.get('header_image_url', None),
+                post_data["approved"],
                 pk
             )
         )
