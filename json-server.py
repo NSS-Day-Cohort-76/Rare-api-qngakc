@@ -4,9 +4,6 @@ from nss_handler import HandleRequests, status
 
 
 # Add your imports below this line
-<<<<<<< HEAD
-from views import create_user, login_user, getAllPosts, get_all_tags, create_tag, retrieve_myposts, getSinglePost, create_post, create_category, get_all_categories, display_comments, create_comment, delete_tag, update_comment
-=======
 from views import (
     create_user,
     login_user,
@@ -25,10 +22,10 @@ from views import (
     get_all_users,
     delete_post,
     update_post,
-    delete_tag
+    delete_tag,
+    update_comment
 )
 
->>>>>>> develop
 
 
 class JSONServer(HandleRequests):
@@ -81,19 +78,18 @@ class JSONServer(HandleRequests):
 
     def do_PUT(self):
         """Handle PUT requests from a client"""
+
         content_len = int(self.headers.get("content-length", 0))
-        request_body = self.rfile.read(content_len)
-        request_body = json.loads(request_body)
+        raw_body = self.rfile.read(content_len)
+        request_body = json.loads(raw_body)
 
         url = self.parse_url(self.path)
         pk = url["pk"]
- # pk needs to be the single comment that we have selected, we can then do a WHERE query to update
+
         if url["requested_resource"] == "update_comment":
             if pk != 0:
                 update_successful = update_comment(request_body, pk)
                 return self.response(update_successful, status.HTTP_200_SUCCESS.value)
-        content_len = int(self.headers.get('content-length', 0))
-        request_body = self.rfile.read(content_len)
 
         if url["requested_resource"] == "posts":
             if pk != 0:
@@ -106,15 +102,12 @@ class JSONServer(HandleRequests):
                         status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                     )
 
-        
-        tag_data = json.loads(request_body)
-
-
         if url["requested_resource"] == "tags":
             if pk != 0:
-                successfully_updated = update_tag(pk, tag_data)
+                successfully_updated = update_tag(pk, request_body)
                 if successfully_updated:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
 
     def do_DELETE(self):
         url = self.parse_url(self.path)
