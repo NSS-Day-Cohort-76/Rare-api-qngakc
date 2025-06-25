@@ -178,26 +178,41 @@ def update_post(pk, post_data):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
+        fields = []
+        values = []
+
+        if "title" in post_data: 
+            fields.append("title = ?")
+            values.append(post_data["title"])
+            
+        if "category_id" in post_data:
+            fields.append("category_id = ?")
+            values.append(post_data["category_id"])
+
+        if "content" in post_data:
+            fields.append("content = ?")
+            values.append(post_data["content"])
+
+        if "image_url" in post_data:
+            fields.append("image_url = ?")
+            values.append(post_data["image_url"])
+
+        if "approved" in post_data:
+            fields.append("approved = ?")
+            values.append(post_data["approved"])
+
+        values.append(pk)
+
         db_cursor.execute(
-            """
+            f"""
             UPDATE Posts
             SET
-                title = ?,
-                category_id = ?,
-                content = ?,
-                image_url = ?,
-                approved = ?
+            {', '.join(fields)}
             WHERE id = ?
-            """,
-            (
-                post_data['title'],
-                post_data['category_id'],
-                post_data['content'],
-                post_data.get('header_image_url', None),
-                post_data["approved"],
-                pk
-            )
+            """, values
         )
+
+        
 
         db_cursor.execute("DELETE FROM PostTags WHERE post_id = ?", (pk,))
 

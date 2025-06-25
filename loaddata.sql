@@ -25,7 +25,8 @@ CREATE TABLE "Users" (
   "password" varchar,
   "profile_image_url" varchar,
   "created_on" date,
-  "active" bit
+  "active" bit,
+  "admin_id" bit
 );
 
 CREATE TABLE "DemotionQueue" (
@@ -106,17 +107,17 @@ INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
 
-INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active) VALUES
-('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1),
-('Bob', 'Johnson', 'bob@example.com', 'Back-end wizard.', 'bob_j', 'password123', 'https://picsum.photos/200?2', '2023-11-15', 1),
-('Clara', 'Nguyen', 'clara@example.com', 'Full-stack dev and mentor.', 'clara_n', 'password123', 'https://picsum.photos/200?3', '2022-08-20', 1),
-('David', 'Lee', 'david@example.com', 'Tech blogger & gamer.', 'david_l', 'password123', 'https://picsum.photos/200?4', '2025-01-10', 0),
-('Eve', 'Turner', 'eve@example.com', 'Data analyst turned coder.', 'eve_t', 'password123', 'https://picsum.photos/200?5', '2024-06-12', 1),
-('Fiona', 'Adams', 'fiona@example.com', 'UX researcher and cat mom.', 'fiona_a', 'password123', 'https://picsum.photos/200?6', '2024-05-10', 1),
-('George', 'Baker', 'george@example.com', 'DevOps enthusiast.', 'george_b', 'password123', 'https://picsum.photos/200?7', '2023-04-22', 1),
-('Hannah', 'Chen', 'hannah@example.com', 'New to coding but loving it!', 'hannah_c', 'password123', 'https://picsum.photos/200?8', '2025-02-01', 1),
-('Ian', 'Davis', 'ian@example.com', 'Cybersecurity student.', 'ian_d', 'password123', 'https://picsum.photos/200?9', '2024-09-18', 0),
-('Jasmine', 'Evans', 'jasmine@example.com', 'Python dev and blogger.', 'jasmine_e', 'password123', 'https://picsum.photos/200?10', '2023-12-05', 1);
+INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active, admin_id) VALUES
+('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1, 1),
+('Bob', 'Johnson', 'bob@example.com', 'Back-end wizard.', 'bob_j', 'password123', 'https://picsum.photos/200?2', '2023-11-15', 1, 0),
+('Clara', 'Nguyen', 'clara@example.com', 'Full-stack dev and mentor.', 'clara_n', 'password123', 'https://picsum.photos/200?3', '2022-08-20', 1, 1),
+('David', 'Lee', 'david@example.com', 'Tech blogger & gamer.', 'david_l', 'password123', 'https://picsum.photos/200?4', '2025-01-10', 0, 0),
+('Eve', 'Turner', 'eve@example.com', 'Data analyst turned coder.', 'eve_t', 'password123', 'https://picsum.photos/200?5', '2024-06-12', 1, 0),
+('Fiona', 'Adams', 'fiona@example.com', 'UX researcher and cat mom.', 'fiona_a', 'password123', 'https://picsum.photos/200?6', '2024-05-10', 1, 0),
+('George', 'Baker', 'george@example.com', 'DevOps enthusiast.', 'george_b', 'password123', 'https://picsum.photos/200?7', '2023-04-22', 1, 0),
+('Hannah', 'Chen', 'hannah@example.com', 'New to coding but loving it!', 'hannah_c', 'password123', 'https://picsum.photos/200?8', '2025-02-01', 1, 0),
+('Ian', 'Davis', 'ian@example.com', 'Cybersecurity student.', 'ian_d', 'password123', 'https://picsum.photos/200?9', '2024-09-18', 0, 0),
+('Jasmine', 'Evans', 'jasmine@example.com', 'Python dev and blogger.', 'jasmine_e', 'password123', 'https://picsum.photos/200?10', '2023-12-05', 1, 0);
 
 INSERT INTO Posts (
   user_id,
