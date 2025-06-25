@@ -175,5 +175,7 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (3, 1, '2025-01-01'),
 (2, 5, '2025-06-01');
 
+ALTER TABLE Users ADD COLUMN is_admin BOOLEAN DEFAULT 0;
 
+UPDATE Users SET is_admin = 1 WHERE id = 6
 
