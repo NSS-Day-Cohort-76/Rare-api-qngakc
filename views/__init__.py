@@ -3,4 +3,4 @@ from .posts_view import getAllPosts, getSinglePost, retrieve_myposts, create_pos
 from .user import create_user, login_user, get_all_users
 from .categories_view import get_all_categories, create_category, delete_category, update_category
 from .comments import display_comments, create_comment, update_comment, delete_comment
-from .reactions_view import get_all_reactions
+from .reactions_view import get_all_reactions, create_reaction

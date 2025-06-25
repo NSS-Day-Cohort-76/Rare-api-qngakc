@@ -26,7 +26,8 @@ from views import (
     delete_comment,
     update_comment,
     update_category,
-    get_all_reactions
+    get_all_reactions,
+    create_reaction
 )
 
 
@@ -233,7 +234,15 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
 
-
+        if url["requested_resource"] == "reactions":
+            created = create_reaction(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                json.dumps({ "error": "Failed to create reaction" }),
+                status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+            )
 #
 # THE CODE BELOW THIS LINE IS NOT IMPORTANT FOR REACHING YOUR LEARNING OBJECTIVES
 #
