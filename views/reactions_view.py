@@ -17,12 +17,11 @@ def create_reaction(reaction_data):
         db_cursor = conn.cursor()
 
         db_cursor.execute(
-            """
-            INSERT INTO Reactions (label)
-            VALUES(?)
+             """
+            INSERT INTO Reactions (label, emoji, img_url)
+            VALUES(?, ?, ?)
             """,
-            (reaction_data['label'], reaction_data['image_url'])
+            (reaction_data['label'], reaction_data['emoji'], reaction_data['img_url'])
         )
-        reactions = [dict(row) for row in db_cursor.fetchall()]
 
-    return json.dumps(reactions)
+    return json.dumps(reaction_data)

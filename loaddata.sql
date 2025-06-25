@@ -71,7 +71,8 @@ CREATE TABLE "Comments" (
 CREATE TABLE "Reactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar,
-  "image_url" varchar
+  "emoji" varchar,
+  "img_url" varchar
 );
 
 CREATE TABLE "PostReactions" (
@@ -104,7 +105,6 @@ CREATE TABLE "Categories" (
 
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
-INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
 
 INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active) VALUES
 ('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1),
@@ -158,6 +158,13 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (1, 2, '2024-12-01'),
 (3, 1, '2025-01-01'),
 (2, 5, '2025-06-01');
+
+INSERT INTO Reactions (label, emoji, img_url) VALUES
+('cowboy','🤠', NULL),
+('fire','🔥', NULL),
+('grin','😀', NULL),
+('thonk', NULL, 'https://osyu.sh/thonk3k.png'),
+('uh okay', NULL, 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWF4aGF0d3JydGVxcjA1YmZ4aW5lenlhZ2k2cGJvZHhmMTJyaDBycSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2K5jinAlChoCLS/giphy.gif')
 
 ALTER TABLE Users ADD COLUMN is_admin BOOLEAN DEFAULT 0;
 
