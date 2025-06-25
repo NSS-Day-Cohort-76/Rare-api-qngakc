@@ -206,6 +206,9 @@ def update_post(pk, post_data):
             fields.append("approved = ?")
             values.append(post_data["approved"])
 
+        if not fields: 
+            return False
+
         values.append(pk)
 
         db_cursor.execute(
@@ -213,10 +216,9 @@ def update_post(pk, post_data):
             UPDATE Posts
             SET
             {', '.join(fields)}
-            WHERE id = ?
+            WHERE Posts.id = ?
             """, values
         )
-
         
 
         db_cursor.execute("DELETE FROM PostTags WHERE post_id = ?", (pk,))
@@ -227,7 +229,7 @@ def update_post(pk, post_data):
                 "INSERT INTO PostTags (post_id, tag_id) VALUES (?, ?)",
                 (pk, tag_id)
             )
-
         rows_affected = db_cursor.rowcount
 
-    return True if rows_affected > 0 else False
+        return True if rows_affected > 0 else False
+

@@ -101,7 +101,7 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_updated = update_post(pk, request_body)
                 if successfully_updated:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                    return self.response(successfully_updated, status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                 else:
                     return self.response(
                         json.dumps({"error": "Post not found"}),
