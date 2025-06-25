@@ -25,3 +25,17 @@ def create_reaction(reaction_data):
         )
 
     return json.dumps(reaction_data)
+
+def delete_reaction(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+        """
+        DELETE FROM reactions WHERE id = ?
+        """, (pk,)
+        )
+        number_of_rows = db_cursor.rowcount
+
+    return True if number_of_rows > 0 else False

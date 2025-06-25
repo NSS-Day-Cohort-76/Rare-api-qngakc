@@ -28,7 +28,8 @@ from views import (
     get_one_user,
     update_category,
     get_all_reactions,
-    create_reaction
+    create_reaction,
+    delete_reaction
 )
 
 
@@ -171,6 +172,13 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_comment(pk)
                 return self.response(successfully_deleted, status.HTTP_200_SUCCESS.value)
+            
+        if url["requested_resource"] == "reactions":
+            if pk != 0:
+                successfully_deleted = delete_reaction(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
 
 
     def do_POST(self):
