@@ -29,7 +29,8 @@ from views import (
     update_category,
     get_all_reactions,
     create_reaction,
-    delete_reaction
+    delete_reaction, 
+    create_subscription
 )
 
 
@@ -185,6 +186,7 @@ class JSONServer(HandleRequests):
         """Handle POST requests from a client"""
 
         url = self.parse_url(self.path)
+        pk = url["pk"]
         
 
         content_len = int(self.headers.get("content-length", 0))
@@ -233,6 +235,18 @@ class JSONServer(HandleRequests):
             created = create_category(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            else:
+                return self.response(
+                    json.dumps({ "error": "Failed to create category" }),
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
+            
+
+        if url["requested_resource"] == "subscription":
+            created = create_subscription(request_body)
+            if created: 
+                    return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+
 
         if url["requested_resource"] == "reactions":
             created = create_reaction(request_body)
