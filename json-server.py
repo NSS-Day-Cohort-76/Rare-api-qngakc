@@ -25,6 +25,7 @@ from views import (
     delete_tag,
     delete_comment,
     update_comment,
+    get_one_user,
     update_category,
     get_all_reactions,
     create_reaction
@@ -35,7 +36,6 @@ from views import (
 class JSONServer(HandleRequests):
 
     def do_GET(self):
-        response_body = ""
         url = self.parse_url(self.path)
         pk = url["pk"]
 
@@ -72,11 +72,13 @@ class JSONServer(HandleRequests):
         
         if url["requested_resource"] == "users":
             if url["pk"] != 0:
-                pass
+                response_body = get_one_user(pk)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
                 # response_body = getSinglePost(url["pk"])
                 # return self.response(response_body, status.HTTP_200_SUCCESS.value)
-            response_body = get_all_users()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else: 
+                response_body = get_all_users()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
         
         if url["requested_resource"] == "reactions":
             if url["pk"] != 0:
@@ -107,7 +109,7 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_updated = update_post(pk, request_body)
                 if successfully_updated:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                    return self.response(successfully_updated, status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                 else:
                     return self.response(
                         json.dumps({"error": "Post not found"}),
