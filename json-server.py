@@ -26,7 +26,10 @@ from views import (
     delete_comment,
     update_comment,
     get_one_user,
-    update_category
+    update_category,
+    get_all_reactions,
+    create_reaction,
+    delete_reaction
 )
 
 
@@ -77,6 +80,12 @@ class JSONServer(HandleRequests):
             else: 
                 response_body = get_all_users()
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "reactions":
+            if url["pk"] != 0:
+                pass
+            response_body = get_all_reactions()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
 
@@ -163,6 +172,13 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_comment(pk)
                 return self.response(successfully_deleted, status.HTTP_200_SUCCESS.value)
+            
+        if url["requested_resource"] == "reactions":
+            if pk != 0:
+                successfully_deleted = delete_reaction(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
 
 
     def do_POST(self):
@@ -212,23 +228,16 @@ class JSONServer(HandleRequests):
             created = create_tag(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
-            else:
-                return self.response(
-                    json.dumps({ "error": "Failed to create tag" }),
-                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-                )  
             
         if url["requested_resource"] == "categories":
             created = create_category(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
-            else:
-                return self.response(
-                    json.dumps({ "error": "Failed to create category" }),
-                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-                )
 
-
+        if url["requested_resource"] == "reactions":
+            created = create_reaction(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
 #
 # THE CODE BELOW THIS LINE IS NOT IMPORTANT FOR REACHING YOUR LEARNING OBJECTIVES
 #
