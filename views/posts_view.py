@@ -120,13 +120,18 @@ def getSinglePost(pk):
     return json.dumps(post)
 
 
-
-from datetime import datetime
-import sqlite3
-
 def create_post(post_data):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            "SELECT is_admin FROM Users WHERE id = ?",
+            (post_data['author_id'],)
+        )
+        result = db_cursor.fetchone()
+        is_admin = result[0] if result else 0
+
+        approved = True if is_admin else False
 
         db_cursor.execute(
             """
@@ -142,7 +147,7 @@ def create_post(post_data):
                 datetime.now().isoformat(),
                 post_data.get('header_image_url', None),
                 post_data['content'],
-                True,
+                approved,
             )
         )
 
