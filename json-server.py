@@ -26,7 +26,8 @@ from views import (
     delete_comment,
     update_comment,
     get_one_user,
-    update_category
+    update_category,
+    create_subscription
 )
 
 
@@ -169,6 +170,7 @@ class JSONServer(HandleRequests):
         """Handle POST requests from a client"""
 
         url = self.parse_url(self.path)
+        pk = url["pk"]
         
 
         content_len = int(self.headers.get("content-length", 0))
@@ -227,6 +229,12 @@ class JSONServer(HandleRequests):
                     json.dumps({ "error": "Failed to create category" }),
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
+            
+
+        if url["requested_resource"] == "subscription":
+            created = create_subscription(request_body)
+            if created: 
+                    return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
 
 
 #
