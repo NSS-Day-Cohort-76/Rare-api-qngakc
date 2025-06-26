@@ -30,7 +30,8 @@ from views import (
     get_all_reactions,
     create_reaction,
     delete_reaction, 
-    create_subscription
+    create_subscription,
+    get_single_user
 )
 
 
@@ -74,18 +75,9 @@ class JSONServer(HandleRequests):
         
         if url["requested_resource"] == "users":
             if url["pk"] != 0:
-                response_body = get_one_user(pk)
+                response_body = get_single_user(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-                # response_body = getSinglePost(url["pk"])
-                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
-            else: 
-                response_body = get_all_users()
-                return self.response(response_body, status.HTTP_200_SUCCESS.value)
-        
-        if url["requested_resource"] == "reactions":
-            if url["pk"] != 0:
-                pass
-            response_body = get_all_reactions()
+            response_body = get_all_users()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
