@@ -13,7 +13,7 @@ def get_all_reactions():
 
 def create_reaction(reaction_data):
     with sqlite3.connect("./db.sqlite3") as conn:
-        conn.row_factory = sqlite3
+        conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
         db_cursor.execute(
@@ -28,7 +28,7 @@ def create_reaction(reaction_data):
 
 def delete_reaction(pk):
     with sqlite3.connect("./db.sqlite3") as conn:
-        conn.row_factory = sqlite3
+        conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
         db_cursor.execute(
@@ -39,3 +39,17 @@ def delete_reaction(pk):
         number_of_rows = db_cursor.rowcount
 
     return True if number_of_rows > 0 else False
+
+def add_post_reaction(reaction_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+        """
+        INSERT INTO PostReactions (user_id, reaction_id, post_id)
+        VALUES(?, ?, ?)
+        """,
+        (reaction_data['user_id'], reaction_data['reaction_id'], reaction_data['post_id'])
+
+        )
+    return json.dumps(reaction_data)
