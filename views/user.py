@@ -196,3 +196,18 @@ def update_user_status(pk, request_body):
         conn.commit()
 
     return db_cursor.rowcount > 0
+
+def update_admin_status(pk, request_body):
+    new_status = request_body.get("is_admin")
+
+    with sqlite3.connect('./db.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+            UPDATE Users
+            SET is_admin = ?
+            WHERE id = ?
+        """, (new_status, pk))
+        conn.commit()
+
+    return db_cursor.rowcount > 0
+
