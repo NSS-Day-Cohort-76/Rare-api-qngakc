@@ -161,5 +161,5 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 
 ALTER TABLE Users ADD COLUMN is_admin BOOLEAN DEFAULT 0;
 
-UPDATE Users SET is_admin = 1 WHERE id = 6
+SELECT * FROM Users WHERE id <6
 

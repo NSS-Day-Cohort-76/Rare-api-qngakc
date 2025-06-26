@@ -25,7 +25,8 @@ from views import (
     delete_tag,
     delete_comment,
     update_comment,
-    update_category
+    update_category,
+    get_single_user
 )
 
 
@@ -70,9 +71,8 @@ class JSONServer(HandleRequests):
         
         if url["requested_resource"] == "users":
             if url["pk"] != 0:
-                pass
-                # response_body = getSinglePost(url["pk"])
-                # return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                response_body = get_single_user(pk)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = get_all_users()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
