@@ -25,13 +25,13 @@ from views import (
     delete_tag,
     delete_comment,
     update_comment,
-    get_one_user,
     update_category,
     get_all_reactions,
     create_reaction,
-    delete_reaction, 
+    delete_reaction,
     create_subscription,
-    get_single_user
+    get_single_user,
+    add_post_reaction
 )
 
 
@@ -78,6 +78,12 @@ class JSONServer(HandleRequests):
                 response_body = get_single_user(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             response_body = get_all_users()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "reactions":
+            if url["pk"] != 0:
+                pass
+            response_body = get_all_reactions()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
@@ -242,6 +248,11 @@ class JSONServer(HandleRequests):
 
         if url["requested_resource"] == "reactions":
             created = create_reaction(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
+            
+        if url["requested_resource"] == "postReactions":
+            created = add_post_reaction(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
 #
