@@ -25,7 +25,12 @@ from views import (
     delete_tag,
     delete_comment,
     update_comment,
+    get_one_user,
     update_category,
+    get_all_reactions,
+    create_reaction,
+    delete_reaction, 
+    create_subscription,
     get_single_user
 )
 
@@ -34,7 +39,6 @@ from views import (
 class JSONServer(HandleRequests):
 
     def do_GET(self):
-        response_body = ""
         url = self.parse_url(self.path)
         pk = url["pk"]
 
@@ -99,7 +103,7 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_updated = update_post(pk, request_body)
                 if successfully_updated:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                    return self.response(successfully_updated, status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                 else:
                     return self.response(
                         json.dumps({"error": "Post not found"}),
@@ -161,12 +165,20 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_comment(pk)
                 return self.response(successfully_deleted, status.HTTP_200_SUCCESS.value)
+            
+        if url["requested_resource"] == "reactions":
+            if pk != 0:
+                successfully_deleted = delete_reaction(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
 
 
     def do_POST(self):
         """Handle POST requests from a client"""
 
         url = self.parse_url(self.path)
+        pk = url["pk"]
         
 
         content_len = int(self.headers.get("content-length", 0))
@@ -210,11 +222,6 @@ class JSONServer(HandleRequests):
             created = create_tag(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
-            else:
-                return self.response(
-                    json.dumps({ "error": "Failed to create tag" }),
-                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-                )  
             
         if url["requested_resource"] == "categories":
             created = create_category(request_body)
@@ -225,8 +232,18 @@ class JSONServer(HandleRequests):
                     json.dumps({ "error": "Failed to create category" }),
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
+            
+
+        if url["requested_resource"] == "subscription":
+            created = create_subscription(request_body)
+            if created: 
+                    return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
 
 
+        if url["requested_resource"] == "reactions":
+            created = create_reaction(request_body)
+            if created:
+                return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
 #
 # THE CODE BELOW THIS LINE IS NOT IMPORTANT FOR REACHING YOUR LEARNING OBJECTIVES
 #

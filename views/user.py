@@ -97,3 +97,39 @@ def get_single_user(pk):
         user= dict(user_row)
 
     return json.dumps(user)
+
+def get_one_user(pk): 
+    with sqlite3.connect('./db.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+    SELECT id, first_name, last_name, admin_id, profile_image_url, bio, created_on
+    FROM Users
+    WHERE id = ?
+""", (pk, ))
+        
+        row = db_cursor.fetchone()
+
+        if row: 
+            return json.dumps(dict(row))
+
+        else:
+            return None
+        
+def create_subscription(url):
+    with sqlite3.connect('./db.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+    INSERT INTO Subscriptions (follower_id, author_id, created_on)
+     VALUES (?, ?, ?)
+""", (int(url["follower_id"]), int(url["author_id"]), url["created_on"]))
+        
+        id = db_cursor.lastrowid
+
+        return json.dumps({
+            'token': id,
+            'valid': True
+        })
