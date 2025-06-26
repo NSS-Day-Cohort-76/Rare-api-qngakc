@@ -107,7 +107,7 @@ def get_one_user(pk):
 
         db_cursor.execute(
             """
-    SELECT id, first_name, last_name, admin_id, profile_image_url, bio, created_on
+    SELECT id, first_name, last_name, is_admin, profile_image_url, bio, created_on
     FROM Users
     WHERE id = ?
 """,
@@ -178,10 +178,6 @@ def delete_subscription(pk):
         
         else: 
             return json.dumps({"deleted": False, "subscription_id": "Not Found"})
-        return json.dumps({
-            'token': id,
-            'valid': True
-        })
 
 def update_user_status(pk, request_body):
     new_status = request_body.get("active", 0)
