@@ -17,7 +17,7 @@ def login_user(user):
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-            select id, username
+            select id, username, active
             from Users
             where username = ?
             and password = ?
@@ -25,7 +25,7 @@ def login_user(user):
 
         user_from_db = db_cursor.fetchone()
 
-        if user_from_db is not None:
+        if user_from_db is not None and user_from_db['active'] == 1:
             response = {
                 'valid': True,
                 'token': user_from_db['id']
@@ -133,3 +133,17 @@ def create_subscription(url):
             'token': id,
             'valid': True
         })
+
+def update_user_status(pk, request_body):
+    new_status = request_body.get("active", 0)
+
+    with sqlite3.connect('./db.sqlite3') as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+            UPDATE Users
+            SET active = ?
+            WHERE id = ?
+        """, (new_status, pk))
+        conn.commit()
+
+    return db_cursor.rowcount > 0
