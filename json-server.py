@@ -30,7 +30,9 @@ from views import (
     get_all_reactions,
     create_reaction,
     delete_reaction, 
-    create_subscription
+    create_subscription,
+    get_all_subscriptions,
+    delete_subscription
 )
 
 
@@ -87,6 +89,11 @@ class JSONServer(HandleRequests):
                 pass
             response_body = get_all_reactions()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        if url["requested_resource"] == "subscription":
+            if url["pk"] == 0:
+                response_body = get_all_subscriptions()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
 
@@ -179,6 +186,11 @@ class JSONServer(HandleRequests):
                 successfully_deleted = delete_reaction(pk)
                 if successfully_deleted:
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+        if url["requested_resource"] == "subscription":
+            if url["requested_resource"] != 0:
+                successfully_deleted = delete_subscription(pk)
+                return self.response(successfully_deleted, status.HTTP_200_SUCCESS.value)
 
 
 
