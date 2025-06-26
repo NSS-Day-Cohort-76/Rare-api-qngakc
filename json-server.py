@@ -34,7 +34,8 @@ from views import (
     delete_subscription,
     get_single_user,
     add_post_reaction,
-    update_user_status
+    update_user_status,
+    update_admin_status
 )
 
 
@@ -160,6 +161,28 @@ class JSONServer(HandleRequests):
                         json.dumps({"error": "User not found"}),
                         status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                     )
+        if url["requested_resource"] == "users_admin":
+            if pk != 0:
+                successfully_updated = update_admin_status(pk, request_body)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "User not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
+        if url["requested_resource"] == "users_admin":
+            if pk != 0:
+                successfully_updated = update_admin_status(pk, request_body)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                else:
+                    return self.response(
+                        json.dumps({"error": "User not found"}),
+                        status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                    )
+
+
 
     def do_DELETE(self):
         url = self.parse_url(self.path)
