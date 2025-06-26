@@ -182,7 +182,4 @@ INSERT INTO Reactions (label, emoji, img_url) VALUES
 ('thonk', NULL, 'https://osyu.sh/thonk3k.png'),
 ('uh okay', NULL, 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWF4aGF0d3JydGVxcjA1YmZ4aW5lenlhZ2k2cGJvZHhmMTJyaDBycSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2K5jinAlChoCLS/giphy.gif')
 
-ALTER TABLE Users ADD COLUMN is_admin BOOLEAN DEFAULT 0;
-
-UPDATE Users SET is_admin = 1 WHERE id = 6
 
