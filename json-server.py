@@ -251,7 +251,7 @@ class JSONServer(HandleRequests):
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
             
-        if url["requested_resource"] == "postReactions":
+        if url["requested_resource"] == "PostReactions":
             created = add_post_reaction(request_body)
             if created:
                 return self.response(created, status.HTTP_201_SUCCESS_CREATED.value)
