@@ -2,6 +2,7 @@ import sqlite3
 import json
 from datetime import datetime
 
+
 def login_user(user):
     """Checks for the user in the database
 
@@ -12,7 +13,7 @@ def login_user(user):
         json string: If the user was found will return valid boolean of True and the user's id as the token
                      If the user was not found will return valid boolean False
     """
-    with sqlite3.connect('./db.sqlite3') as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -21,7 +22,9 @@ def login_user(user):
             from Users
             where username = ?
             and password = ?
-        """, (user['username'], user['password']))
+        """,
+            (user["username"], user["password"]),
+        )
 
         user_from_db = db_cursor.fetchone()
 
@@ -31,9 +34,7 @@ def login_user(user):
                 'token': user_from_db['id']
             }
         else:
-            response = {
-                'valid': False
-            }
+            response = {"valid": False}
 
         return json.dumps(response)
 
@@ -47,31 +48,32 @@ def create_user(user):
     Returns:
         json string: Contains the token of the newly created user
     """
-    with sqlite3.connect('./db.sqlite3') as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
         Insert into Users (first_name, last_name, username, email, password, bio, created_on, active) values (?, ?, ?, ?, ?, ?, ?, 1)
-        """, (
-            user['first_name'],
-            user['last_name'],
-            user['username'],
-            user['email'],
-            user['password'],
-            user['bio'],
-            datetime.now()
-        ))
+        """,
+            (
+                user["first_name"],
+                user["last_name"],
+                user["username"],
+                user["email"],
+                user["password"],
+                user["bio"],
+                datetime.now(),
+            ),
+        )
 
         id = db_cursor.lastrowid
 
-        return {
-            'token': id,
-            'valid': True
-        }
+        return {"token": id, "valid": True}
+
 
 def get_all_users():
-    with sqlite3.connect('./db.sqlite3') as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -98,37 +100,84 @@ def get_single_user(pk):
 
     return json.dumps(user)
 
-def get_one_user(pk): 
-    with sqlite3.connect('./db.sqlite3') as conn:
+def get_one_user(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
     SELECT id, first_name, last_name, admin_id, profile_image_url, bio, created_on
     FROM Users
     WHERE id = ?
-""", (pk, ))
-        
+""",
+            (pk,),
+        )
+
         row = db_cursor.fetchone()
 
-        if row: 
+        if row:
             return json.dumps(dict(row))
 
         else:
             return None
-        
+
+
 def create_subscription(url):
-    with sqlite3.connect('./db.sqlite3') as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
     INSERT INTO Subscriptions (follower_id, author_id, created_on)
      VALUES (?, ?, ?)
-""", (int(url["follower_id"]), int(url["author_id"]), url["created_on"]))
-        
+""",
+            (int(url["follower_id"]), int(url["author_id"]), url["created_on"]),
+        )
+
         id = db_cursor.lastrowid
 
+        return json.dumps({"token": id, "valid": True})
+
+
+def get_all_subscriptions():
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+    SELECT id, follower_id, author_id, created_on 
+    FROM Subscriptions
+"""
+        )
+        rows = db_cursor.fetchall()
+
+        subscription = [dict(row) for row in rows]
+
+        return json.dumps(subscription)
+
+
+def delete_subscription(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+    DELETE FROM Subscriptions
+    WHERE id = ?
+
+    """,
+            (pk,),
+        )
+
+        if db_cursor.rowcount > 0:
+            return json.dumps({"deleted": True, "subscription_id": pk})
+        
+        else: 
+            return json.dumps({"deleted": False, "subscription_id": "Not Found"})
         return json.dumps({
             'token': id,
             'valid': True
