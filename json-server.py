@@ -35,7 +35,8 @@ from views import (
     get_single_user,
     add_post_reaction,
     update_user_status,
-    update_admin_status
+    update_admin_status,
+    get_post_by_author_id
 )
 
 
@@ -84,6 +85,9 @@ class JSONServer(HandleRequests):
         if url["requested_resource"] == "subscription":
             if url["pk"] == 0:
                 response_body = get_all_subscriptions()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else: 
+                response_body = get_post_by_author_id(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         if url["requested_resource"] == "reactions":
