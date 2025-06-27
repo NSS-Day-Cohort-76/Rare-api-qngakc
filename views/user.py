@@ -107,7 +107,7 @@ def get_one_user(pk):
 
         db_cursor.execute(
             """
-    SELECT id, first_name, last_name, admin_id, profile_image_url, bio, created_on
+    SELECT id, first_name, last_name, is_admin, profile_image_url, bio, created_on
     FROM Users
     WHERE id = ?
 """,
@@ -157,6 +157,32 @@ def get_all_subscriptions():
         subscription = [dict(row) for row in rows]
 
         return json.dumps(subscription)
+    
+
+def get_post_by_author_id(pk): 
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+            # joining on category_id = catergory.id
+        db_cursor.execute("""
+    SELECT Categories.label, Users.first_name, Users.last_name, Posts.user_id, Posts.category_id, Posts.title, Posts.publication_date, Subscriptions.follower_id, Subscriptions.author_id, Subscriptions.created_on
+    FROM Subscriptions
+    JOIN Posts ON author_id = user_id
+    JOIN Users ON Subscriptions.author_id = Users.id
+    JOIN Categories ON Categories.id = Posts.category_id
+    WHERE Subscriptions.follower_id = ?
+""", (pk, ))
+
+    rows = db_cursor.fetchall()
+
+    subscription = [dict(row) for row in rows]
+
+    return json.dumps(subscription)
+        
+        # continue to add the return statement so that i can add the Posts
+        # that match to the state in react to properly display the correct posts 
+        # for subscribe view
 
 
 def delete_subscription(pk):
@@ -178,10 +204,6 @@ def delete_subscription(pk):
         
         else: 
             return json.dumps({"deleted": False, "subscription_id": "Not Found"})
-        return json.dumps({
-            'token': id,
-            'valid': True
-        })
 
 def update_user_status(pk, request_body):
     new_status = request_body.get("active", 0)
