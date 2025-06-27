@@ -176,9 +176,11 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (2, 5, '2025-06-01');
 
 INSERT INTO Reactions (label, emoji, img_url) VALUES
-('cowboy','🤠', NULL),
-('fire','🔥', NULL),
+('smile','😊', NULL),
 ('grin','😀', NULL),
+('heart','🧡', NULL),
+('fire','🔥', NULL),
+('cowboy','🤠', NULL),
 ('thonk', NULL, 'https://osyu.sh/thonk3k.png'),
 ('uh okay', NULL, 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWF4aGF0d3JydGVxcjA1YmZ4aW5lenlhZ2k2cGJvZHhmMTJyaDBycSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2K5jinAlChoCLS/giphy.gif')
 
