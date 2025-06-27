@@ -36,6 +36,8 @@ from views import (
     add_post_reaction,
     update_user_status,
     update_admin_status,
+    get_post_reactions,
+    delete_post_reaction,
     get_post_by_author_id
 )
 
@@ -95,7 +97,13 @@ class JSONServer(HandleRequests):
                 pass
             response_body = get_all_reactions()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        if url["requested_resource"] == "PostReactions":
+            if url["pk"] != 0:
+                response_body = get_post_reactions(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
+    
     def do_PUT(self):
         """Handle PUT requests from a client"""
 
@@ -252,6 +260,14 @@ class JSONServer(HandleRequests):
                 return self.response(
                     successfully_deleted, status.HTTP_200_SUCCESS.value
                 )
+            
+        if url["requested_resource"] == "PostReactions":
+            if pk != 0:
+                successfully_deleted = delete_post_reaction(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
 
     def do_POST(self):
         """Handle POST requests from a client"""

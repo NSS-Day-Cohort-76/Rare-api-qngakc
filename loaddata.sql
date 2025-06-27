@@ -26,7 +26,7 @@ CREATE TABLE "Users" (
   "profile_image_url" varchar,
   "created_on" date,
   "active" bit,
-  "admin_id" bit
+  "is_admin" bit
 );
 
 CREATE TABLE "DemotionQueue" (
@@ -107,7 +107,7 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 
-INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active, admin_id) VALUES
+INSERT INTO Users (first_name, last_name, email, bio, username, password, profile_image_url, created_on, active, is_admin) VALUES
 ('Alice', 'Smith', 'alice@example.com', 'Lover of front-end design.', 'alice_s', 'password123', 'https://picsum.photos/200?1', '2024-03-01', 1, 1),
 ('Bob', 'Johnson', 'bob@example.com', 'Back-end wizard.', 'bob_j', 'password123', 'https://picsum.photos/200?2', '2023-11-15', 1, 0),
 ('Clara', 'Nguyen', 'clara@example.com', 'Full-stack dev and mentor.', 'clara_n', 'password123', 'https://picsum.photos/200?3', '2022-08-20', 1, 1),
@@ -176,9 +176,11 @@ INSERT INTO Subscriptions (follower_id, author_id, created_on) VALUES
 (2, 5, '2025-06-01');
 
 INSERT INTO Reactions (label, emoji, img_url) VALUES
-('cowboy','🤠', NULL),
-('fire','🔥', NULL),
+('smile','😊', NULL),
 ('grin','😀', NULL),
+('heart','🧡', NULL),
+('fire','🔥', NULL),
+('cowboy','🤠', NULL),
 ('thonk', NULL, 'https://osyu.sh/thonk3k.png'),
 ('uh okay', NULL, 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWF4aGF0d3JydGVxcjA1YmZ4aW5lenlhZ2k2cGJvZHhmMTJyaDBycSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2K5jinAlChoCLS/giphy.gif')
 

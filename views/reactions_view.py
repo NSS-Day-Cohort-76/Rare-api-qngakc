@@ -53,3 +53,48 @@ def add_post_reaction(reaction_data):
 
         )
     return json.dumps(reaction_data)
+
+def get_post_reactions(post_id=None):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        if post_id:
+            db_cursor.execute("""
+            SELECT
+                r.id,
+                r.label,
+                r.emoji,
+                r.img_url,
+                COUNT(pr.id) as count
+            FROM PostReactions pr
+            JOIN Reactions r ON pr.reaction_id = r.id
+            WHERE pr.post_id = ?
+            GROUP BY r.id, r.label, r.emoji, r.img_url
+
+            """, (post_id,))
+        else:
+            db_cursor.execute("""
+            SELECT pr.id, pr.post_id, pr.reaction_id, r.label, r.img_url
+            FROM PostReactions pr
+            JOIN Reactions r ON pr.reaction_id = r.id
+            """)
+
+    results = [dict(row) for row in db_cursor.fetchall()]
+
+    return json.dumps(results)
+
+
+def delete_post_reaction(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+        """
+        DELETE FROM PostReactions WHERE id = ?
+        """, (pk,)
+        )
+        number_of_rows = db_cursor.rowcount
+
+    return True if number_of_rows > 0 else False
